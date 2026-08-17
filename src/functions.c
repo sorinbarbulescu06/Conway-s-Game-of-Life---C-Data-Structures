@@ -1,6 +1,7 @@
 #include "def.h"
 
-void Draw(slider_t Zoom, button_t Pan, Camera2D cam, button_t Grid)
+void Draw(slider_t Zoom, button_t Pan, Camera2D cam, button_t Grid,
+           bool paused)
 {
     BeginDrawing();
     ClearBackground(BLACK);
@@ -38,7 +39,10 @@ void Draw(slider_t Zoom, button_t Pan, Camera2D cam, button_t Grid)
     GuiToggle(Pan->box, Pan->text, &Pan->mode);
         //grid
     GuiToggle(Grid->box, Grid->text, &Grid->mode);
-
+    //drawing the pause text
+    if (paused == true) {
+        DrawText("Paused", 0, 0, 20, WHITE);
+    }
     if (Pan->mode == true) {
         SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
     } else {
@@ -58,4 +62,29 @@ void Check_Scroll(slider_t Zoom)
             Zoom->value = Zoom->Max;
         }
     }
+}
+
+void free_list(list_t head)
+{
+    list_t t = head->next;
+    while (t != NULL) {
+        list_t aux = t;
+        t = t->next;
+        free(aux);
+    }
+    free(head);
+}
+
+void free_data(slider_t Zoom, button_t Pan, button_t Grid, list_t cell_list,
+    list_t *Hashmap)
+{
+    int i;
+    free(Zoom);
+    free(Pan);
+    free(Grid);
+    free_list(cell_list);
+    for (i = 0; i < CAPACITY; ++i) {
+        free_list(Hashmap[i]);
+    }
+    free(Hashmap);
 }

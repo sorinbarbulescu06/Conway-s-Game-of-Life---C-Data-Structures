@@ -7,15 +7,22 @@ int main()
     slider_t Zoom;
     button_t Pan, Grid;
     Camera2D cam = {0};
-    if (InitGame(&Zoom, &Pan, &Grid, &cam) == 0)
+    list_t cell_list;
+    list_t *Hashmap;
+    bool paused = false;
+    if (InitGame(&Zoom, &Pan, &Grid, &cam, &cell_list, &Hashmap) == 0) // allocation error
         return 1;
-
 
     //game loop
     while(!WindowShouldClose()) {
-        //gameruling
-
-        //interactive actions
+        if (paused == false) {
+            //gameruling
+        }
+        //interactive 
+            //pause
+            if (IsKeyPressed(KEY_SPACE)) {
+                paused = !paused;
+            }
             //zoom
             Check_Scroll(Zoom);
             cam.zoom = Zoom->value;
@@ -26,9 +33,11 @@ int main()
             cam.target.y -= mouse_delta.y / cam.zoom;
         }
         //Drawing Zone
-        Draw(Zoom, Pan, cam, Grid);
+        Draw(Zoom, Pan, cam, Grid, paused);
     }
-    
+
+    //free zone
+    free_data(Zoom, Pan, Grid, cell_list, Hashmap);
     CloseWindow();
     return 0;
 }

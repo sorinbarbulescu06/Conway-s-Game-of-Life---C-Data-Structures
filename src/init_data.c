@@ -1,8 +1,9 @@
 #include "def.h"
 
 int InitGame(slider_t *Zoom, button_t *Pan, button_t *Grid,  // 0 if error, 1 if ok
-              Camera2D *cam)
+              Camera2D *cam, list_t *cell_list, list_t **Hashmap)
 {
+    int i, j;
     //malloc zone
     *Zoom = (slider_t) malloc(sizeof(slider_d));
     if (*Zoom == NULL) {
@@ -21,6 +22,45 @@ int InitGame(slider_t *Zoom, button_t *Pan, button_t *Grid,  // 0 if error, 1 if
         free(*Zoom);
         return 0;
     }
+
+    *cell_list = (list_t) malloc(sizeof(list_d));
+    if (*cell_list == NULL) {
+        free(*Zoom);
+        free(*Pan);
+        free(*Grid);
+        return 0;
+    }
+
+    *Hashmap = (list_t *) calloc(CAPACITY, sizeof(list_t));
+    if (*Hashmap == NULL) {
+        free(*Zoom);
+        free(*Pan);
+        free(*Grid);
+        free(*cell_list);
+        return 0;
+    }
+    
+    for(i = 0; i < CAPACITY; ++i) {
+        (*Hashmap)[i] = (list_t) malloc(sizeof(list_d));
+        if ((*Hashmap)[i] != NULL) {
+            (*Hashmap)[i]->next = NULL;
+        } else {
+            for (j = 0; j < i; ++j) {
+                free((*Hashmap)[j]);
+            }
+            free(*Zoom);
+            free(*Pan);
+            free(*Grid);
+            free(*cell_list);
+            free(*Hashmap);
+            return 0;
+        }
+    }
+
+    
+    //cell data init
+    (*cell_list)->next = NULL;
+
     //data setting zone
         //zoom
     (*Zoom)->box.height = SLIDER_HEIGHT;
@@ -54,7 +94,6 @@ int InitGame(slider_t *Zoom, button_t *Pan, button_t *Grid,  // 0 if error, 1 if
     (*cam).zoom = (*Zoom)->value;
     (*cam).target = (Vector2) {0, 0};
     (*cam).offset = (Vector2) {SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f};
-
 
     //window Init;
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Conway's Game of Life");
