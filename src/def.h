@@ -14,6 +14,8 @@
 #define MAGNIFY_MAX 100
 #define FPS 60
 #define CAPACITY 65536
+#define PRIME1 73856093
+#define PRIME2 19349663
 
 typedef struct slider {
     Rectangle box;
@@ -47,7 +49,7 @@ int InitGame(slider_t *Zoom, button_t *Pan, button_t *Grid, Camera2D *cam,
 
 //functions.c
 void Draw(slider_t Zoom, button_t Pan, Camera2D cam, button_t Grid,
-    bool paused);
+    bool paused, list_t cell_list);
 void Check_Scroll(slider_t Zoom);
 void free_list(list_t head);
 void free_data(slider_t Zoom, button_t Pan, button_t Grid, list_t cell_list,
@@ -56,3 +58,5 @@ void free_data(slider_t Zoom, button_t Pan, button_t Grid, list_t cell_list,
 //cell_logic.c
 int void_list(list_t head);
 int attach(list_t head, cell_t element);
+int find(list_t head, cell_t cell);
+int put(int x, int y, list_t cell_list, list_t *Hashmap);

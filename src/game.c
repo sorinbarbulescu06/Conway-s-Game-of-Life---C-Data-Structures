@@ -15,8 +15,19 @@ int main()
 
     //game loop
     while(!WindowShouldClose()) {
+        //gameruling
+            //birth of a cell
+        if (Pan->mode == false && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+            Vector2 pos = GetScreenToWorld2D(GetMousePosition(), cam);
+            if (put((int)floor(pos.x), (int)floor(pos.y), cell_list, Hashmap) == 0) {
+                free_data(Zoom, Pan, Grid, cell_list, Hashmap);
+                return 1;
+            }
+        }
+            //...
         if (paused == false) {
-            //gameruling
+            //rest of them
+
         }
         //interactive 
             //pause
@@ -33,7 +44,7 @@ int main()
             cam.target.y -= mouse_delta.y / cam.zoom;
         }
         //Drawing Zone
-        Draw(Zoom, Pan, cam, Grid, paused);
+        Draw(Zoom, Pan, cam, Grid, paused, cell_list);
     }
 
     //free zone

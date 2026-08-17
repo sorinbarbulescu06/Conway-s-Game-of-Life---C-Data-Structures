@@ -1,7 +1,7 @@
 #include "def.h"
 
 void Draw(slider_t Zoom, button_t Pan, Camera2D cam, button_t Grid,
-           bool paused)
+           bool paused, list_t cell_list)
 {
     BeginDrawing();
     ClearBackground(BLACK);
@@ -9,7 +9,7 @@ void Draw(slider_t Zoom, button_t Pan, Camera2D cam, button_t Grid,
     BeginMode2D(cam);
     //drawing the game
         //grid
-    if (Grid->mode == true && cam.zoom >= 10.0f) {
+    if (Grid->mode == true && cam.zoom >= 7.0f) {
         
         Vector2 startPos = GetScreenToWorld2D((Vector2){ 0, 0 }, cam);
         Vector2 endPos = GetScreenToWorld2D((Vector2){ SCREEN_WIDTH, SCREEN_HEIGHT }, cam);
@@ -28,7 +28,11 @@ void Draw(slider_t Zoom, button_t Pan, Camera2D cam, button_t Grid,
         }
     }
         //cells
-        //...
+    list_t t = cell_list->next;
+    while (t != NULL) {
+        DrawRectangle(t->cell->x, t->cell->y, 1, 1, WHITE);
+        t = t->next;
+    }
     EndMode2D();
     //drawing the sliders
         //zoom
