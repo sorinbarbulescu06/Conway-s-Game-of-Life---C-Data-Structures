@@ -1,7 +1,8 @@
 #include "def.h"
 
 int InitGame(slider_t *Zoom, button_t *Pan, button_t *Grid,  // 0 if error, 1 if ok
-              Camera2D *cam, list_t *cell_list, list_t **Hashmap)
+              Camera2D *cam, list_t *cell_list, list_t **Hashmap,
+                list_t **buffer_hashmap, list_t *buffer_cell_list)
 {
     int i, j;
     //malloc zone
@@ -56,8 +57,54 @@ int InitGame(slider_t *Zoom, button_t *Pan, button_t *Grid,  // 0 if error, 1 if
             return 0;
         }
     }
+    *buffer_hashmap = (list_t *) calloc(CAPACITY, sizeof(list_t));
+    if (*buffer_hashmap == NULL) {
+        free(*Zoom);
+        free(*Pan);
+        free(*Grid);
+        free(*cell_list);
+        for (i = 0; i < CAPACITY; ++i) {
+            free((*Hashmap)[i]);
+        }
+        free(*Hashmap);
+        return 0;
+    }
 
+    for (i = 0; i < CAPACITY; ++i) {
+        (*buffer_hashmap)[i] = (list_t) malloc(sizeof(list_d));
+        if ((*buffer_hashmap)[i] != NULL) {
+            (*buffer_hashmap)[i]->next = NULL;
+        } else {
+            for (j = 0; j < i; ++j) {
+                free((*buffer_hashmap)[j]);
+            }
+            free((*buffer_hashmap));
+            free(*Zoom);
+            free(*Pan);
+            free(*Grid);
+            free(*cell_list);
+            for (i = 0; i < CAPACITY; ++i) {
+                free((*Hashmap)[i]);
+            }
+            free(*Hashmap);
+            return 0;
+        }
+    }
     
+    (*buffer_cell_list) = (list_t) malloc(sizeof(list_d));
+    if ((*buffer_cell_list) == NULL) {
+        for (i = 0; i < CAPACITY; ++i) {
+            free((*buffer_hashmap[i]));
+            free((*Hashmap[i]));
+        }
+        free(*Hashmap);
+        free(*buffer_hashmap);
+        free(*Zoom);
+        free(*Pan);
+        free(*Grid);
+        free(*cell_list);
+
+    }
     //cell data init
     (*cell_list)->next = NULL;
 

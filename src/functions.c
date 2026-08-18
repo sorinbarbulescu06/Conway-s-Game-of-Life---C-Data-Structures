@@ -80,15 +80,33 @@ void free_list(list_t head)
 }
 
 void free_data(slider_t Zoom, button_t Pan, button_t Grid, list_t cell_list,
-    list_t *Hashmap)
+    list_t *Hashmap, list_t *buffer_hashmap, list_t buffer_cell_list)
 {
     int i;
+    
+    list_t t = cell_list->next;
+    while (t != NULL) {
+        free(t->cell);
+        t = t->next;
+    }
+    t = buffer_cell_list->next;
+    while (t != NULL) {
+        free(t->cell);
+        t = t->next;
+    }
     free(Zoom);
     free(Pan);
     free(Grid);
     free_list(cell_list);
+    free_list(buffer_cell_list);
+    
     for (i = 0; i < CAPACITY; ++i) {
         free_list(Hashmap[i]);
     }
     free(Hashmap);
+    
+    for (i = 0; i < CAPACITY; ++i) {
+        free_list(buffer_hashmap[i]);
+    }
+    free(buffer_hashmap);
 }
